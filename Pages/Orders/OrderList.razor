@@ -1,0 +1,70 @@
+@page "/orders"
+@using BlazorCRM.Data.Models
+@using BlazorCRM.Data.Services
+@inject OrderService OrderService
+@inject NavigationManager NavigationManager
+
+<h3>Orders</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CreateNew">Create New Order</button>
+</div>
+
+@if (orders == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@(order.Customer?.Name ?? "")</td>
+                    <td>@order.OrderDate.ToShortDateString()</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Edit(order.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(order.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Order>? orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = (await OrderService.GetAllOrders()).ToList();
+    }
+
+    private void CreateNew()
+    {
+        NavigationManager.NavigateTo("/orders/create");
+    }
+
+    private void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/orders/edit/{id}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await OrderService.DeleteOrder(id);
+        orders = (await OrderService.GetAllOrders()).ToList();
+    }
+}

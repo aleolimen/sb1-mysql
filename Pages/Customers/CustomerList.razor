@@ -1,0 +1,68 @@
+@page "/customers"
+@using BlazorCRM.Data.Models
+@using BlazorCRM.Data.Services
+@inject CustomerService CustomerService
+@inject NavigationManager NavigationManager
+
+<h3>Customers</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CreateNew">Create New Customer</button>
+</div>
+
+@if (customers == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Edit(customer.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(customer.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Customer>? customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = (await CustomerService.GetAllCustomers()).ToList();
+    }
+
+    private void CreateNew()
+    {
+        NavigationManager.NavigateTo("/customers/create");
+    }
+
+    private void Edit(int id)
+    {
+        NavigationManager.NavigateTo($"/customers/edit/{id}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await CustomerService.DeleteCustomer(id);
+        customers = (await CustomerService.GetAllCustomers()).ToList();
+    }
+}

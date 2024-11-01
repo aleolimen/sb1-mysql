@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CrmMaui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CrmMaui"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <ShellContent
+            Title="Customers"
+            ContentTemplate="{DataTemplate local:CustomersPage}"
+            Route="Customers" />
+        
+        <ShellContent
+            Title="Products"
+            ContentTemplate="{DataTemplate local:ProductsPage}"
+            Route="Products" />
+            
+        <ShellContent
+            Title="Orders"
+            ContentTemplate="{DataTemplate local:OrdersPage}"
+            Route="Orders" />
+    </TabBar>
+
+</Shell>
